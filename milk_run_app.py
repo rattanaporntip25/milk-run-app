@@ -50,18 +50,18 @@ st.subheader("🗺️ แผนที่เส้นทาง Milk Run")
 # สร้าง dict พิกัดเวนเดอร์ จาก Abbreviation
 vendor_coords = {
     row["Ab."]: (row["lat"], row["lng"])
-    for _, row in vendors_df.iterrows()
+    for _, row in vendors.iterrows()
 }
 
 # ให้ผู้ใช้เลือกวันที่และรถ
-routes_df["date"] = pd.to_datetime(routes_df["date"])
-selected_date = st.date_input("เลือกวันที่", value=routes_df["date"].min())
-selected_vehicle = st.selectbox("เลือกรถ", sorted(routes_df["vehicle_id"].unique()))
+routes["date"] = pd.to_datetime(routes["date"])
+selected_date = st.date_input("เลือกวันที่", value=routes["date"].min())
+selected_vehicle = st.selectbox("เลือกรถ", sorted(routes["vehicle_id"].unique()))
 
 # กรองข้อมูลตามวันและรถ
-filtered = routes_df[
-    (routes_df["date"] == pd.to_datetime(selected_date)) &
-    (routes_df["vehicle_id"] == selected_vehicle)
+filtered = routes[
+    (routes["date"] == pd.to_datetime(selected_date)) &
+    (routes["vehicle_id"] == selected_vehicle)
 ].sort_values(["trip_no", "arrival_time"])
 
 if filtered.empty:
