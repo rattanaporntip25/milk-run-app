@@ -48,10 +48,14 @@ st.dataframe(frequency)
 st.subheader("🗺️ แผนที่เส้นทาง Milk Run")
 
 # สร้าง dict พิกัดเวนเดอร์ จาก Abbreviation
+# เพิ่ม Daikin เข้าไปใน vendor_coords โดยตรง
 vendor_coords = {
     row["Ab."]: (row["lat"], row["lng"])
     for _, row in vendors.iterrows()
 }
+
+# ✅ เพิ่มพิกัด Daikin (ตัวย่อ DIT)
+vendor_coords["DIT"] = (13.4214134, 101.0101508)
 
 # ให้ผู้ใช้เลือกวันที่และรถ
 routes["date"] = pd.to_datetime(routes["date"])
