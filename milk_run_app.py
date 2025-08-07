@@ -80,13 +80,18 @@ else:
     for trip_no, group in filtered.groupby("trip_no"):
         coords = []
 
-        # ✅ จุดเริ่มต้น: DIT
+        # รายละเอียด trip สำหรับ popup
+        trip_date = selected_date.strftime("%Y-%m-%d")
+        trip_vehicle = selected_vehicle
+        trip_info = f"Trip {trip_no}<br>วันที่: {trip_date}<br>รถ: {trip_vehicle}"
+
+        # ✅ จุดเริ่มต้น: DIT (โรงงาน)
         dit_lat, dit_lng = vendor_coords["DIT"]
         coords.append((dit_lat, dit_lng))
         folium.Marker(
             location=(dit_lat, dit_lng),
-            popup="DIT (Start)",
-            icon=folium.Icon(color="black", icon="home", prefix="fa")
+            popup=f"🏭 DIT (เริ่มต้น)<br>{trip_info}",
+            icon=folium.Icon(color="black", icon="industry", prefix="fa")
         ).add_to(route_map)
 
         # ✅ เวนเดอร์ใน trip
@@ -95,7 +100,7 @@ else:
             lat, lng = vendor_coords.get(abbr, (None, None))
             if lat and lng:
                 coords.append((lat, lng))
-                popup = f"{abbr}<br>{row['arrival_time']} - {row['departure_time']}"
+                popup = f"📍 {abbr}<br>{row['arrival_time']} - {row['departure_time']}"
                 folium.Marker(
                     location=(lat, lng),
                     popup=popup,
@@ -106,8 +111,8 @@ else:
         coords.append((dit_lat, dit_lng))
         folium.Marker(
             location=(dit_lat, dit_lng),
-            popup="DIT (End)",
-            icon=folium.Icon(color="black", icon="home", prefix="fa")
+            popup=f"🏭 DIT (สิ้นสุด)<br>{trip_info}",
+            icon=folium.Icon(color="black", icon="industry", prefix="fa")
         ).add_to(route_map)
 
         # ✅ วาดเส้นทาง
@@ -116,7 +121,8 @@ else:
                 coords,
                 color=colors[trip_no % len(colors)],
                 weight=3,
-                opacity=0.8
+                opacity=0.8,
+                tooltip=f"เส้นทาง Trip {trip_no}"
             ).add_to(route_map)
 
     # ✅ แสดงบน Streamlit
