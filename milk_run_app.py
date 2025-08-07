@@ -90,7 +90,7 @@ else:
         coords.append((dit_lat, dit_lng))
         folium.Marker(
             location=(dit_lat, dit_lng),
-            popup=f"🏭 DIT (เริ่มต้น)<br>{trip_info}",
+            popup=f"🏭 DIT",
             icon=folium.Icon(color="black", icon="industry", prefix="fa")
         ).add_to(route_map)
 
@@ -111,7 +111,7 @@ else:
         coords.append((dit_lat, dit_lng))
         folium.Marker(
             location=(dit_lat, dit_lng),
-            popup=f"🏭 DIT (สิ้นสุด)<br>{trip_info}",
+            popup=f"🏭 DIT ",
             icon=folium.Icon(color="black", icon="industry", prefix="fa")
         ).add_to(route_map)
 
