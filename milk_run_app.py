@@ -72,28 +72,53 @@ if filtered.empty:
     st.warning("ไม่มีข้อมูลรอบรถในวันนี้")
 else:
     # สร้างแผนที่เริ่มต้น
-    first_vendor = filtered.iloc[0]["Ab."]
-    map_center = vendor_coords.get(first_vendor, (13.7, 100.5))
+    map_center = vendor_coords.get("DIT", (13.7, 100.5))
     route_map = folium.Map(location=map_center, zoom_start=9)
 
     colors = ["red", "blue", "green", "orange", "purple", "darkred"]
-    
-    # แสดงแต่ละ trip
+
     for trip_no, group in filtered.groupby("trip_no"):
         coords = []
+
+        # ✅ จุดเริ่มต้น: DIT
+        dit_lat, dit_lng = vendor_coords["DIT"]
+        coords.append((dit_lat, dit_lng))
+        folium.Marker(
+            location=(dit_lat, dit_lng),
+            popup="DIT (Start)",
+            icon=folium.Icon(color="black", icon="home", prefix="fa")
+        ).add_to(route_map)
+
+        # ✅ เวนเดอร์ใน trip
         for _, row in group.iterrows():
             abbr = row["Ab."]
             lat, lng = vendor_coords.get(abbr, (None, None))
             if lat and lng:
                 coords.append((lat, lng))
                 popup = f"{abbr}<br>{row['arrival_time']} - {row['departure_time']}"
-                folium.Marker(location=(lat, lng), popup=popup,
-                              icon=folium.Icon(color=colors[trip_no % len(colors)])).add_to(route_map)
+                folium.Marker(
+                    location=(lat, lng),
+                    popup=popup,
+                    icon=folium.Icon(color=colors[trip_no % len(colors)])
+                ).add_to(route_map)
 
-        # วาดเส้น
+        # ✅ จุดสิ้นสุด: DIT
+        coords.append((dit_lat, dit_lng))
+        folium.Marker(
+            location=(dit_lat, dit_lng),
+            popup="DIT (End)",
+            icon=folium.Icon(color="black", icon="home", prefix="fa")
+        ).add_to(route_map)
+
+        # ✅ วาดเส้นทาง
         if len(coords) >= 2:
-            folium.PolyLine(coords, color=colors[trip_no % len(colors)],
-                            weight=3, opacity=0.8).add_to(route_map)
+            folium.PolyLine(
+                coords,
+                color=colors[trip_no % len(colors)],
+                weight=3,
+                opacity=0.8
+            ).add_to(route_map)
 
-    # แสดงบน Streamlit
+    # ✅ แสดงบน Streamlit
     st_data = st_folium(route_map, width=800, height=500)
+
